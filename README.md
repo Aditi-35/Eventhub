@@ -174,7 +174,7 @@ Screenshots of the application can be added below.
 ![Eventhub Admin Dashboard](screenshots/admin.png)
 
 ### 📝 Event Registration
-![Eventhub Event Registration](screenshots/registration.png)
+![Eventhub Event Registration](screenshots/Events_registration.png)
 
 ### 🏠 Clubs Page
 ![Eventhub Clubs Page](screenshots/clubs.png)
