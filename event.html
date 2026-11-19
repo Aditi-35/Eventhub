@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style1.css">
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 16 16"><path d="M8 1L10 5.5H15L11 8.5L12.5 13L8 10L3.5 13L5 8.5L1 5.5H6L8 1Z"/></svg>
+    </div>
+    EventHub
+  </div>
+  <nav>
+  <button class="nav-btn active" onclick="showView('public')">Events</button>
+  <button class="nav-btn" onclick="showView('clubs')">Clubs</button>
+  <button class="nav-btn" id="admin-nav-btn" onclick="showView('admin-area')">Admin Portal</button>
+</nav>
+</header>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- PUBLIC VIEW -->
+<div class="view" id="view-clubs">
+  <div class="hero">
+    <h1 class="hero-title">Explore <span>Clubs</span></h1>
+    <p class="hero-sub">Discover all student clubs and visit their official pages.</p>
+  </div>
+
+  <div class="events-section">
+    <div class="events-grid" id="clubs-grid"></div>
+  </div>
+</div>
+<div class="view active" id="view-public">
+  <div class="hero">
+    <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Live &amp; Upcoming Events</div>
+    <h1 class="hero-title">Your Campus,<br><span>Always Alive</span></h1>
+    <p class="hero-sub">Discover events, workshops, competitions and celebrations happening across your college — all in one place.</p>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num" id="stat-total">0</div><div class="hero-stat-label">Total Events</div></div>
+      <div><div class="hero-stat-num" id="stat-clubs">0</div><div class="hero-stat-label">Active Clubs</div></div>
+      <div><div class="hero-stat-num" id="stat-regs">0</div><div class="hero-stat-label">Registrations</div></div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Filter</span>
+    <button class="filter-chip active" onclick="filterEvents('all', this)">All</button>
+    <button class="filter-chip" onclick="filterEvents('tech', this)">Tech</button>
+    <button class="filter-chip" onclick="filterEvents('cultural', this)">Cultural</button>
+    <button class="filter-chip" onclick="filterEvents('sports', this)">Sports</button>
+    <button class="filter-chip" onclick="filterEvents('academic', this)">Academic</button>
+    <button class="filter-chip" onclick="filterEvents('workshop', this)">Workshop</button>
+  </div>
+
+  
+<div class="events-section">
+
+    <!-- Event Search Bar -->
+    <div class="event-search-container">
+        <span class="search-icon">🔍</span>
+        <input
+            type="search"
+            id="event-search"
+            placeholder="Search events by name, club or keyword..."
+            autocomplete="off"
+            oninput="searchEvents()"
+>
+    </div>
+
+    <div class="events-grid" id="events-grid"></div>
+
+    <div class="empty-state" id="empty-state" style="display:none">
+        <div class="empty-state-icon">◇</div>
+        <h3>No events found</h3>
+        <p>Try a different filter or check back soon.</p>
+    </div>
+
+</div>
+
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">EventHub</div>
+      <div class="footer-divider"></div>
+      <div class="footer-made">Crafted with precision by</div>
+      <!-----<div class="footer-team">Team — UG_4_WAD_AIDS_66</div>----->
+      <div class="footer-names">
+        <span>Aditi Rajput</span>
+        <span>Aditi</span>
+      </div>
+      <div class="footer-copy">©️ 2026 EventHub · All rights reserved</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ADMIN AREA (Login or Dashboard) -->
+<div class="view" id="view-admin-area">
+  <!-- LOGIN -->
+  <div id="admin-login">
+    <div class="login-wrap">
+      <div class="login-bg-orb"></div>
+      <div class="login-card">
+        <div class="login-header">
+          <div class="login-header-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 1C8.7 1 6 3.7 6 7v1H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2h-2V7c0-3.3-2.7-6-6-6zm0 2c2.2 0 4 1.8 4 4v1H8V7c0-2.2 1.8-4 4-4zm0 9c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
+          </div>
+          <div class="login-title">Admin Portal</div>
+          <div class="login-subtitle">Restricted access — authorised personnel only</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" id="login-user" type="text" placeholder="admin" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="login-pass" type="password" placeholder="••••••••">
+          <div class="form-error" id="login-error">Invalid credentials. Please try again.</div>
+        </div>
+        <button class="btn-primary" onclick="doLogin()">Access Dashboard</button>
+        <div class="login-hint">Hint: admin / eventhub123</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="admin-dashboard" style="display:none">
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-section-label">Menu</div>
+        <button class="sidebar-btn active" onclick="showPanel('analytics', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v8H3v-8zm4-4h2v12H7V9zm4-6h2v18h-2V3zm4 8h2v10h-2V11zm4-4h2v14h-2V7z"/></svg>
+          Analytics
+        </button>
+        <button class="sidebar-btn" onclick="showPanel('post', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c.6 0 1 .4 1 1v3h3c.6 0 1 .4 1 1s-.4 1-1 1h-3v3c0 .6-.4 1-1 1s-1-.4-1-1v-3H8c-.6 0-1-.4-1-1s.4-1 1-1h3V7c0-.6.4-1 1-1z"/></svg>
+          Post Event
+        </button>
+        <button class="sidebar-btn" onclick="showPanel('manage', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm2 5h14v2H5v-2zm2 5h10v2H7v-2z"/></svg>
+          Manage Events
+        </button>
+        <div class="sidebar-sep"></div>
+        <button class="sidebar-btn" onclick="doLogout()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.1 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+          Logout
+        </button>
+      </div>
+
+      <!-- Main Content -->
+      <div class="admin-main">
+
+        <!-- Analytics Panel -->
+        <div class="admin-panel active" id="panel-analytics">
+          <div class="panel-title">Analytics Dashboard</div>
+          <div class="panel-sub">Overview of all campus events and registrations.</div>
+          <div class="stat-grid" id="analytics-stats"></div>
+
+          <div class="analytics-row">
+            <div class="analytics-card">
+              <div class="analytics-card-title">Registrations by Club</div>
+              <div class="bars" id="analytics-bars"></div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-card-title">Events by Category</div>
+              <div class="donut-row">
+                <svg width="110" height="110" viewBox="0 0 110 110" id="donut-svg"></svg>
+                <div class="donut-legend" id="donut-legend"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:var(--card-bg);border:0.5px solid var(--border-light);border-radius:10px;padding:1.25rem;">
+            <div class="analytics-card-title" style="margin-bottom:.75rem;">Recent Registrations Feed</div>
+            <div id="reg-feed" style="font-size:13px;color:var(--text-muted);"></div>
+          </div>
+        </div>
+
+        <!-- Post Event Panel -->
+        <div class="admin-panel" id="panel-post">
+          <div class="panel-title">Post New Event</div>
+          <div class="panel-sub">Fill in the details to publish a new event to the public board.</div>
+          <div class="form-card">
+            <div class="form-card-title">Event Details</div>
+            <div class="form-group">
+              <label class="form-label">Event Title</label>
+              <input class="form-input" id="ev-title" placeholder="e.g. Hackathon 2025" type="text">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="ev-cat">
+                  <option value="tech">Tech</option>
+                  <option value="cultural">Cultural</option>
+                  <option value="sports">Sports</option>
+                  <option value="academic">Academic</option>
+                  <option value="workshop">Workshop</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Organising Club</label>
+               <select class="form-select" id="ev-club">
+  <option value="GraphicGeeks">Graphic Geeks</option>
+  <option value="IEEE">IEEE</option>
+  <option value="Swaragni">Swaragni</option>
+  <option value="NSS">NSS</option>
+  <option value="NCC">NCC</option>
+  <option value="Morpankh">Morpankh</option>
+  <option value="Alankrit">Alankrit</option>
+  <option value="Kavyanjali">Kavyanjali</option>
+  <option value="PaperTech">PaperTech</option>
+  <option value="Humanitaria">The Humanitaria</option>
+  <option value="Rangmach">Rangmach</option>
+  <option value="YPS">Youth Parliament Society</option>
+</select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input class="form-input" id="ev-date" type="date">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time</label>
+                <input class="form-input" id="ev-time" type="time">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea class="form-textarea" id="ev-desc" placeholder="Brief description of the event..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Registration Link</label>
+              <input class="form-input" id="ev-reg-link" type="url" placeholder="https://forms.gle/...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Club Info</label>
+              <textarea class="form-textarea" id="ev-club-info" placeholder="Brief info about the organising club..." style="min-height:70px;"></textarea>
+            </div>
+            <div style="margin-top:1rem;">
+              <button class="btn-submit" onclick="postEvent()">Publish Event</button>
+              <button class="btn-secondary" onclick="clearForm()">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manage Panel -->
+        <div class="admin-panel" id="panel-manage">
+          <div class="panel-title">Manage Events</div>
+          <div class="panel-sub">View, edit or remove published events.</div>
+          <div style="background:var(--card-bg);border:0.5px solid var(--border-light);border-radius:10px;overflow:hidden;">
+            <div class="events-table-wrap">
+              <table class="events-table" id="manage-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Club</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Regs</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="manage-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /admin-main -->
+    </div><!-- /admin-layout -->
+
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-logo">EventHub</div>
+        <div class="footer-divider"></div>
+        <div class="footer-made">Crafted with precision by</div>
+        <!-----<div class="footer-team">Team — UG_4_WAD_AIDS_66</div>----->
+        <div class="footer-names">
+          <span>Aditi Rajput</span>
+          <span>Aditi</span>
+        </div>
+        <div class="footer-copy">©️ 2026 EventHub · All rights reserved</div>
+      </div>
+    </footer>
+  </div><!-- /admin-dashboard -->
+</div><!-- /view-admin-area -->
+
+<!-- Registration Modal -->
+<div id="registrationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeRegistration()">&times;</span>
+
+            <h2>Event Registration</h2>
+            <p id="registrationEventName"></p>
+
+            
+        <form id="registrationForm" onsubmit="submitRegistration(event)">
+            <input type="hidden" id="registrationEventId">
+
+            <label for="studentName">Full Name *</label>
+            <input type="text" id="studentName"
+                placeholder="Enter your full name" required>
+
+            <label for="studentEmail">Email Address *</label>
+            <input type="email" id="studentEmail"
+                placeholder="Enter your email" required>
+
+            <label for="studentPhone">Mobile Number *</label>
+            <input type="tel" id="studentPhone"
+                placeholder="Enter 10-digit mobile number"
+                pattern="[0-9]{10}" maxlength="10" required>
+
+            <label for="rollNumber">College Roll Number *</label>
+            <input type="text" id="rollNumber"
+                placeholder="Enter your roll number" required>
+
+            <label for="department">Department *</label>
+            <select id="department" required>
+                <option value="">Select Department</option>
+                <option value="CSE">Computer Science (CSE)</option>
+                <option value="IT">Information Technology (IT)</option>
+                <option value="ECE">Electronics (ECE)</option>
+                <option value="EEE">Electrical (EEE)</option>
+                <option value="ME">Mechanical (ME)</option>
+                <option value="CE">Civil (CE)</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="studyYear">Year of Study *</label>
+            <select id="studyYear" required>
+                <option value="">Select Year</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+            </select>
+
+            <label for="teamName">Team Name (Optional)</label>
+            <input type="text" id="teamName"
+                placeholder="Enter team name if applicable">
+
+            <button type="submit" class="btn-register">
+                Complete Registration
+            </button>
+        </form>
+
+                </div>
+    </div>
+
+    
+<!-- Registration Success Popup -->
+<div id="successModal" class="success-modal">
+    <div class="success-content">
+        <div class="success-emoji">🎉</div>
+
+        <h2>Registration Successful!</h2>
+
+        <p class="success-main">
+            You're officially registered!
+        </p>
+
+        <p class="success-message">
+            Get ready for an amazing experience.
+            We look forward to seeing you there!
+        </p>
+
+        <div class="success-event">
+            ✨ See you at the event! ✨
+        </div>
+
+        <button onclick="closeSuccessModal()">
+            Awesome!
+        </button>
+    </div>
+</div>
+
+
+<!-- Event Details Modal -->
+<div id="eventDetailsModal" class="details-modal">
+    <div class="details-content">
+
+        <span class="details-close"
+              onclick="closeEventDetails()">&times;</span>
+
+        <div class="details-banner">🎓 EVENT DETAILS</div>
+
+        <h2 id="detailsTitle">Event Name</h2>
+
+        <span id="detailsCategory" class="details-category"></span>
+
+        <p id="detailsDescription"></p>
+
+        <div class="details-info">
+            <p>🏛️ <strong>Organized by:</strong>
+                <span id="detailsClub"></span>
+            </p>
+
+            <p>📅 <strong>Date:</strong>
+                <span id="detailsDate"></span>
+            </p>
+
+            <p>⏰ <strong>Time:</strong>
+                <span id="detailsTime"></span>
+            </p>
+
+            <p>👥 <strong>Registrations:</strong>
+                <span id="detailsRegistrations"></span>
+            </p>
+
+            <p>ℹ️ <strong>Club Information:</strong>
+                <span id="detailsClubInfo"></span>
+            </p>
+        </div>
+
+        <button class="btn-register" id="detailsRegisterBtn">
+            Register for Event →
+        </button>
+
+    </div>
+</div>
+
+
+
+<script>
+/* ---- DATA ---- */
+function saveEvents() {
+  localStorage.setItem("events", JSON.stringify(events));
+}
+const CLUBS = {
+  Intellia: { color: '#7C6FE0', abbr: 'INT', insta:'https://www.instagram.com/intellia_miet?igsi=MTdzNTcxd2o4M2R5Mg=='},
+
+  Sanskriti: { color: '#3B82F6', abbr: 'SR', insta:'https://www.instagram.com/miet_sanskriti?igsi=MTYybXkyMng2YW90Yg==' },
+
+  MLSA: { color: '#F59E0B', abbr: 'ML', insta:'https://www.instagram.com/mlsamiet?igsi=MTVtNWMxMjRoYWVodg==' },
+
+  GDG: { color: '#22C55E', abbr: 'GDG', insta:'https://www.instagram.com/nss_geu/' },
+
+  PARIVARTAN: { color: '#EF4444', abbr: 'PV', insta:'https://www.instagram.com/parivartan_miet?igsi=MTNiZ3dsMnNsNHNubw==' },
+
+  ECHOES: { color: '#06B6D4', abbr: 'EC', insta:'https://www.instagram.com/echoes_miet?igsi=dTF6dWwxY2w4NHMw' },
+
+  Kavyanjali: { color: '#A855F7', abbr: 'KV', insta:'https://www.instagram.com/kavyanjali.geu/' },
+
+  Alankrit: { color: '#C9A84C', abbr: 'AK', insta:'' },
+  PaperTech: { color: '#F97316', abbr: 'PT', insta:'' },
+  Humanitaria: { color: '#10B981', abbr: 'TH', insta:'' },
+  Rangmach: { color: '#FB7185', abbr: 'RM', insta:'' },
+  YPS: { color: '#6366F1', abbr: 'YP', insta:'' }
+};
+const TAG_LABELS = { tech:'Tech', cultural:'Cultural', sports:'Sports', academic:'Academic', workshop:'Workshop' };
+
+let events = JSON.parse(localStorage.getItem("events")) || [
+  { id: 1, title: 'National Hackathon 2025', cat: 'tech', club: 'IEEE', date: '2026-08-15', time: '09:00', desc: 'A 36-hour national-level hackathon challenging students to build solutions for real-world problems.', regLink: 'https://forms.gle/example1', clubInfo: 'IEEE Student Chapter — advancing technology for humanity.', regs: 214 },
+  { id: 2, title: 'Resonance — Annual Cultural Fest', cat: 'cultural', club: 'Dramatics', date: '2026-08-22', time: '17:00', desc: 'Music, theatre, dance, and more. Three days of non-stop celebration of arts and culture.', regLink: 'https://forms.gle/example2', clubInfo: 'Dramatics Club — where stories come alive on stage.', regs: 342 },
+  { id: 3, title: 'Inter-College Cricket Tournament', cat: 'sports', club: 'Sports', date: '2026-09-01', time: '07:30', desc: 'Annual inter-college cricket tournament. 16 teams competing for the championship trophy.', regLink: 'https://forms.gle/example3', clubInfo: 'Sports Council — building champions on and off the field.', regs: 96 },
+  { id: 4, title: 'Web Dev Bootcamp', cat: 'workshop', club: 'GDSC', date: '2026-09-10', time: '11:00', desc: 'Hands-on 3-day bootcamp covering HTML, CSS, React, and Node.js with industry mentors.', regLink: 'https://forms.gle/example4', clubInfo: 'GDSC — empowering students with Google technologies.', regs: 178 },
+  { id: 5, title: 'TEDx Campus Talks', cat: 'academic', club: 'Debate', date: '2026-09-18', time: '14:00', desc: 'Ideas worth spreading — six speakers from science, business, and the arts share their journeys.', regLink: 'https://forms.gle/example5', clubInfo: 'Debate Society — nurturing critical thinkers and orators.', regs: 430 },
+  { id: 6, title: 'AI & Machine Learning Summit', cat: 'tech', club: 'GDSC', date: '2026-09-25', time: '10:00', desc: 'Expert talks, demos, and workshops exploring the frontier of artificial intelligence on campus.', regLink: 'https://forms.gle/example6', clubInfo: 'GDSC — empowering students with Google technologies.', regs: 267 },
+];
+
+let nextId = 7;
+let currentFilter = 'all';
+let loggedIn = false;
+function renderClubs() {
+  const grid = document.getElementById('clubs-grid');
+
+  if (!grid) {
+    console.log("clubs-grid not found ❌");
+    return;
+  }
+
+  grid.innerHTML = '';
+
+  Object.entries(CLUBS).forEach(([name, club]) => {
+    const card = document.createElement('div');
+    card.className = 'event-card';
+
+    card.innerHTML = `
+      <div class="event-card-banner" style="background:${club.color};"></div>
+      <div class="event-card-body">
+        <div class="event-club-badge">
+          <div class="club-avatar" style="background:${club.color};">${club.abbr}</div>
+          ${name}
+        </div>
+
+        <div class="event-footer" style="margin-top:10px;">
+          ${
+            club.insta
+            ? `<a href="${club.insta}" target="_blank" class="btn-register">Instagram →</a>`
+            : `<button class="btn-register" disabled>No Page</button>`
+          }
+        </div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  console.log("Clubs rendered ✅");
+}
+
+/* ---- VIEWS ---- */
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+  if (v === 'public') {
+    document.getElementById('view-public').classList.add('active');
+    document.querySelectorAll('.nav-btn')[0].classList.add('active');
+  }
+
+  else if (v === 'clubs') {
+    document.getElementById('view-clubs').classList.add('active');
+    document.querySelectorAll('.nav-btn')[1].classList.add('active');
+    renderClubs();   // 🔥 THIS WAS NOT RUNNING BEFORE
+  }
+
+  else if (v === 'admin-area') {
+    document.getElementById('view-admin-area').classList.add('active');
+    document.querySelectorAll('.nav-btn')[2].classList.add('active');
+
+    if (!loggedIn) {
+      document.getElementById('admin-login').style.display = 'block';
+      document.getElementById('admin-dashboard').style.display = 'none';
+    } else {
+      document.getElementById('admin-login').style.display = 'none';
+      document.getElementById('admin-dashboard').style.display = 'block';
+      refreshAnalytics();
+    }
+  }
+}
+/* ---- LOGIN ---- */
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if (u === 'admin' && p === 'eventhub123') {
+    loggedIn = true;
+    document.getElementById('login-error').classList.remove('show');
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = 'block';
+    refreshAnalytics();
+    showToast('Welcome back, Admin!', 'success');
+  } else {
+    document.getElementById('login-error').classList.add('show');
+    document.getElementById('login-pass').classList.add('error');
+    setTimeout(() => document.getElementById('login-pass').classList.remove('error'), 1000);
+  }
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogout() {
+  loggedIn = false;
+  document.getElementById('admin-dashboard').style.display = 'none';
+  document.getElementById('admin-login').style.display = 'block';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  showToast('Logged out successfully.', '');
+}
+
+/* ---- SIDEBAR PANELS ---- */
+function showPanel(id, btn) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'analytics') refreshAnalytics();
+  if (id === 'manage') renderManageTable();
+}
+
+function searchEvents() {
+    const activeFilter = window.currentEventFilter || 'all';
+    renderPublicEvents(activeFilter);
+}
+
+/* ---- PUBLIC EVENTS ---- */
+function renderPublicEvents(filter) {
+    window.currentEventFilter = filter;
+    const grid = document.getElementById('events-grid');
+    const empty = document.getElementById('empty-state');   
+    const searchTerm = document.getElementById('event-search').value.toLowerCase().trim();
+
+    const filtered = events.filter(e => {
+    const matchesCategory = filter === 'all' || e.cat === filter;
+
+    const matchesSearch =
+        (e.title || '').toLowerCase().includes(searchTerm) ||
+        (e.club || '').toLowerCase().includes(searchTerm) ||
+        (e.desc || '').toLowerCase().includes(searchTerm);
+
+    return matchesCategory && matchesSearch;
+    });
+    grid.innerHTML = '';
+    if (!filtered.length) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    filtered.forEach(ev => {
+        const club = CLUBS[ev.club] || { color: '#888', abbr: ev.club.slice(0,2).toUpperCase() };
+        const dateStr = new Date(ev.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        const timeStr = formatTime(ev.time);
+        const card = document.createElement('div');
+        card.className = 'event-card';
+        card.innerHTML = `
+        <div class="event-card-banner" style="background:${club.color};"></div>
+        <div class="event-card-body">
+            <div class="event-club-row">
+            <div class="event-club-badge">
+                <div class="club-avatar" style="background:${club.color};">${club.abbr}</div>
+                ${ev.club}
+            </div>
+            <span class="event-tag tag-${ev.cat}">${TAG_LABELS[ev.cat]}</span>
+            </div>
+            <div class="event-title">${ev.title}</div>
+            <div class="event-desc">${ev.desc}</div>
+            <div class="event-meta">
+            <div class="event-meta-row">
+                <svg class="meta-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5C3.9 4 3 4.9 3 6v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7z"/></svg>
+                ${dateStr}
+            </div>
+            <div class="event-meta-row">
+                <svg class="meta-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm.5 14.5l-1.5.5V11h-1.5l1.5-4.5 1.5.5v5h1.5l-1.5 4.5z"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
+                ${timeStr}
+            </div>
+            <div class="event-meta-row" style="margin-top:4px;font-style:italic;font-size:11px;color:var(--text-dim);">${ev.clubInfo}</div>
+            </div>
+            
+            <div class="event-footer">
+                <div class="event-regs">
+                    <span>${ev.regs}</span> registered
+                </div>
+
+                <div class="event-actions">
+                    <button type="button" class="btn-details"
+                        onclick="viewEventDetails(${ev.id})">
+                        View Details
+                    </button>
+
+                    <button type="button" class="btn-register"
+                        onclick="simulateReg(${ev.id})">
+                        Register →
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        `;
+        grid.appendChild(card);
+    });
+
+  // Update hero stats
+  const totalRegs = events.reduce((s, e) => s + e.regs, 0);
+  const uniqueClubs = [...new Set(events.map(e => e.club))].length;
+  animateCount('stat-total', events.length);
+  animateCount('stat-clubs', uniqueClubs);
+  animateCount('stat-regs', totalRegs);
+}
+
+
+function viewEventDetails(id) {
+    const ev = events.find(x => x.id === id);
+
+    if (!ev) return;
+
+    document.getElementById("detailsTitle").textContent = ev.title;
+
+    document.getElementById("detailsCategory").textContent =
+        TAG_LABELS[ev.cat] || ev.cat;
+
+    document.getElementById("detailsDescription").textContent = ev.desc;
+
+    document.getElementById("detailsClub").textContent = ev.club;
+
+    document.getElementById("detailsDate").textContent =
+        new Date(ev.date).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        });
+
+    document.getElementById("detailsTime").textContent =
+        formatTime(ev.time);
+
+    document.getElementById("detailsRegistrations").textContent =
+        ev.regs;
+
+    document.getElementById("detailsClubInfo").textContent =
+        ev.clubInfo || "No additional information available.";
+
+    document.getElementById("detailsRegisterBtn").onclick = function () {
+        closeEventDetails();
+        simulateReg(ev.id);
+    };
+
+    document.getElementById("eventDetailsModal").style.display = "flex";
+}
+
+function closeEventDetails() {
+    document.getElementById("eventDetailsModal").style.display = "none";
+}
+
+
+function simulateReg(id) {
+    const ev = events.find(x => x.id === id);
+
+    if (ev) {
+        document.getElementById("registrationEventId").value = ev.id;
+        document.getElementById("registrationEventName").textContent =
+            "Register for: " + ev.title;
+
+        document.getElementById("registrationModal").style.display = "flex";
+    }
+}
+
+
+function viewEventDetails(id) {
+    const ev = events.find(x => x.id === id);
+
+    if (!ev) return;
+
+    document.getElementById("detailsTitle").textContent = ev.title;
+
+    document.getElementById("detailsCategory").textContent =
+        TAG_LABELS[ev.cat] || ev.cat;
+
+    document.getElementById("detailsDescription").textContent =
+        ev.desc || "No description available.";
+
+    document.getElementById("detailsClub").textContent = ev.club;
+
+    document.getElementById("detailsDate").textContent =
+        new Date(ev.date).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+
+    document.getElementById("detailsTime").textContent =
+        formatTime(ev.time);
+
+    document.getElementById("detailsRegistrations").textContent =
+        ev.regs;
+
+    document.getElementById("detailsClubInfo").textContent =
+        ev.clubInfo || "No additional club information.";
+
+    document.getElementById("detailsRegisterBtn").onclick = function () {
+        closeEventDetails();
+        simulateReg(ev.id);
+    };
+
+    document.getElementById("eventDetailsModal").style.display = "flex";
+}
+
+function closeEventDetails() {
+    document.getElementById("eventDetailsModal").style.display = "none";
+}
+
+
+function closeRegistration() {
+    document.getElementById("registrationModal").style.display = "none";
+}
+
+
+
+async function submitRegistration(e) {
+    e.preventDefault();
+
+    const eventId = document.getElementById("registrationEventId").value;
+    const name = document.getElementById("studentName").value.trim();
+    const email = document.getElementById("studentEmail").value.trim();
+    const phone = document.getElementById("studentPhone").value.trim();
+    const rollNumber = document.getElementById("rollNumber").value.trim();
+    const department = document.getElementById("department").value;
+    const studyYear = document.getElementById("studyYear").value;
+    const teamName = document.getElementById("teamName").value.trim();
+
+    try {
+        const response = await fetch('/api/registrations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                eventId, name, email, phone,
+                rollNumber, department, studyYear, teamName
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'Registration failed');
+        }
+
+        const registeredEvent = events.find(ev => ev.id == eventId);
+
+        if (registeredEvent) {
+            registeredEvent.regs++;
+        }
+
+        closeRegistration();
+        document.getElementById("registrationForm").reset();
+
+        renderPublicEvents(window.currentEventFilter || 'all');
+        refreshAnalytics();
+
+        document.getElementById("successModal").style.display = "flex";
+
+    } catch (error) {
+        console.error('Registration error:', error);
+        showToast('Could not complete registration. Please try again.', 'error');
+    }
+}
+
+function closeSuccessModal() {
+    document.getElementById("successModal").style.display = "none";
+}
+
+
+function filterEvents(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderPublicEvents(f);
+}
+
+function formatTime(t) {
+  if (!t) return '';
+  const [h, m] = t.split(':');
+  const hr = parseInt(h);
+  return `${hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr)}:${m} ${hr >= 12 ? 'PM' : 'AM'}`;
+}
+
+function animateCount(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let cur = 0;
+  const step = Math.ceil(target / 40);
+  const t = setInterval(() => {
+    cur = Math.min(cur + step, target);
+    el.textContent = cur;
+    if (cur >= target) clearInterval(t);
+  }, 30);
+}
+
+/* ---- POST EVENT ---- */
+
+/* ---- POST EVENT ---- */
+async function postEvent() {
+    const title = document.getElementById('ev-title').value.trim();
+    const cat = document.getElementById('ev-cat').value;
+    const club = document.getElementById('ev-club').value;
+    const date = document.getElementById('ev-date').value;
+    const time = document.getElementById('ev-time').value;
+    const desc = document.getElementById('ev-desc').value.trim();
+    const regLink = document.getElementById('ev-reg-link').value.trim();
+    const clubInfo = document.getElementById('ev-club-info').value.trim();
+
+    if (!title || !date || !time || !desc) {
+        showToast('Please fill in all required fields.', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/events', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title,
+                category: cat,
+                club: club,
+                event_date: date,
+                event_time: time,
+                description: desc,
+                registration_link: regLink || '#',
+                club_info: clubInfo || ''
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'Could not publish event');
+        }
+
+        events.push({
+            id: result.id,
+            title, cat, club, date, time, desc,
+            regLink: regLink || '#',
+            clubInfo: clubInfo || '',
+            regs: 0
+        });
+
+        renderPublicEvents(currentFilter);
+        refreshAnalytics();
+        clearForm();
+
+        showToast('Event published successfully!', 'success');
+        showPanel('manage', null);
+
+        document.querySelectorAll('.sidebar-btn').forEach((b, i) => {
+            b.classList.remove('active');
+            if (i === 2) b.classList.add('active');
+        });
+
+    } catch (error) {
+        console.error('Error publishing event:', error);
+        showToast('Could not save event to database.', 'error');
+    }
+}
+
+
+function clearForm() {
+  ['ev-title','ev-date','ev-time','ev-desc','ev-reg-link','ev-club-info'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+/* ---- MANAGE TABLE ---- */
+function renderManageTable() {
+  const tbody = document.getElementById('manage-body');
+  tbody.innerHTML = '';
+  events.forEach(ev => {
+    const dateStr = new Date(ev.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${ev.title}</td>
+      <td>${ev.club}</td>
+      <td><span class="tag-pill tag-${ev.cat}">${TAG_LABELS[ev.cat]}</span></td>
+      <td>${dateStr}</td>
+      <td>${ev.regs}</td>
+      <td>
+        <button class="action-btn del" onclick="deleteEvent(${ev.id})">Remove</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+
+async function deleteEvent(id) {
+    try {
+        const response = await fetch(`/api/events/${id}`, {
+            method: 'DELETE'
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message);
+        }
+
+        events = events.filter(e => e.id !== id);
+
+        renderManageTable();
+        renderPublicEvents(currentFilter);
+        refreshAnalytics();
+
+        showToast('Event removed successfully.', 'success');
+
+    } catch (error) {
+        console.error('Delete error:', error);
+        showToast(error.message || 'Could not delete event.', 'error');
+    }
+}
+
+/* ---- ANALYTICS ---- */
+function refreshAnalytics() {
+  const total = events.length;
+  const totalRegs = events.reduce((s, e) => s + e.regs, 0);
+  const clubs = [...new Set(events.map(e => e.club))].length;
+  const topEvent = events.length ? events.reduce((a, b) => a.regs > b.regs ? a : b) : null;
+
+  const statsEl = document.getElementById('analytics-stats');
+  statsEl.innerHTML = `
+    <div class="stat-card gold"><div class="stat-label">Total Events</div><div class="stat-num">${total}</div><div class="stat-sub">Published on board</div></div>
+    <div class="stat-card purple"><div class="stat-label">Total Registrations</div><div class="stat-num">${totalRegs.toLocaleString()}</div><div class="stat-sub">Across all events</div></div>
+    <div class="stat-card green"><div class="stat-label">Active Clubs</div><div class="stat-num">${clubs}</div><div class="stat-sub">Organising events</div></div>
+    <div class="stat-card red"><div class="stat-label">Top Event</div><div class="stat-num" style="font-size:1.1rem;margin-top:4px;">${topEvent ? topEvent.title.split(' ').slice(0,2).join(' ') : '—'}</div><div class="stat-sub">${topEvent ? topEvent.regs + ' registrations' : ''}</div></div>
+  `;
+
+  // Bar chart by club
+  const clubRegs = {};
+  events.forEach(e => { clubRegs[e.club] = (clubRegs[e.club] || 0) + e.regs; });
+  const maxRegs = Math.max(...Object.values(clubRegs), 1);
+  const barsEl = document.getElementById('analytics-bars');
+  const CLUB_COLORS = ['#C9A84C','#7C6FE0','#3DAD7A','#FB7185','#3B82F6','#F59E0B','#C084FC'];
+  barsEl.innerHTML = '';
+  Object.entries(clubRegs).forEach(([club, regs], i) => {
+    const pct = Math.round((regs / maxRegs) * 100);
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    col.innerHTML = `
+      <div class="bar-val">${regs}</div>
+      <div class="bar" style="height:${pct}%;background:${CLUB_COLORS[i % CLUB_COLORS.length]};width:90%;"></div>
+      <div class="bar-name">${club.slice(0,4)}</div>
+    `;
+    barsEl.appendChild(col);
+  });
+
+  // Donut by category
+  const catCounts = {};
+  events.forEach(e => { catCounts[e.cat] = (catCounts[e.cat] || 0) + 1; });
+  const catTotal = Object.values(catCounts).reduce((a,b) => a+b, 1);
+  const CAT_COLORS = { tech:'#7C6FE0', cultural:'#C9A84C', sports:'#3DAD7A', academic:'#3B82F6', workshop:'#FB7185' };
+  const donutSvg = document.getElementById('donut-svg');
+  const legend = document.getElementById('donut-legend');
+  donutSvg.innerHTML = '';
+  legend.innerHTML = '';
+  let angle = -90;
+  Object.entries(catCounts).forEach(([cat, count]) => {
+    const pct = count / catTotal;
+    const sweep = pct * 360;
+    const [x1, y1] = polar(55, 55, 38, angle);
+    const [x2, y2] = polar(55, 55, 38, angle + sweep);
+    const largeArc = sweep > 180 ? 1 : 0;
+    const color = CAT_COLORS[cat] || '#888';
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M55,55 L${x1},${y1} A38,38 0 ${largeArc},1 ${x2},${y2} Z`);
+    path.setAttribute('fill', color);
+    path.setAttribute('stroke', '#14141C');
+    path.setAttribute('stroke-width', '2');
+    donutSvg.appendChild(path);
+    angle += sweep;
+
+    const item = document.createElement('div');
+    item.className = 'donut-legend-item';
+    item.innerHTML = `<div class="donut-dot" style="background:${color};"></div>${TAG_LABELS[cat]} — ${count}`;
+    legend.appendChild(item);
+  });
+  // Center hole
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('cx', '55'); circle.setAttribute('cy', '55'); circle.setAttribute('r', '22');
+  circle.setAttribute('fill', '#16161F');
+  donutSvg.appendChild(circle);
+  const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  label.setAttribute('x', '55'); label.setAttribute('y', '55');
+  label.setAttribute('text-anchor', 'middle'); label.setAttribute('dominant-baseline', 'central');
+  label.setAttribute('fill', '#8A8696'); label.setAttribute('font-size', '11');
+  label.textContent = total;
+  donutSvg.appendChild(label);
+
+  // Reg feed
+  const feed = document.getElementById('reg-feed');
+  const feedItems = [...events].sort((a,b) => b.regs - a.regs).slice(0, 6);
+  feed.innerHTML = feedItems.map(ev => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border-light);">
+      <div>
+        <span style="color:var(--text);font-weight:500;">${ev.title}</span>
+        <span style="color:var(--text-dim);font-size:11px;margin-left:8px;">${ev.club}</span>
+      </div>
+      <span style="color:var(--gold);font-weight:600;">${ev.regs}</span>
+    </div>
+  `).join('');
+}
+
+function polar(cx, cy, r, deg) {
+  const rad = (deg * Math.PI) / 180;
+  return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+}
+
+/* ---- TOAST ---- */
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => { t.classList.remove('show'); }, 3000);
+}
+
+
+/* ---- INIT ---- */
+async function loadEventsFromDatabase() {
+    try {
+        const response = await fetch('/api/events');
+
+        if (!response.ok) {
+            throw new Error('Failed to load events');
+        }
+
+        const databaseEvents = await response.json();
+
+        events = databaseEvents.map(ev => ({
+            id: ev.id,
+            title: ev.title,
+            cat: ev.category,
+            club: ev.club,
+            date: ev.event_date,
+            time: String(ev.event_time).substring(0, 5),
+            desc: ev.description,
+            regLink: ev.registration_link,
+            clubInfo: ev.club_info,
+            regs: ev.registration_count
+        }));
+
+        renderPublicEvents('all');
+        refreshAnalytics();
+
+    } catch (error) {
+        console.error('Error loading events:', error);
+        alert('Could not load events from database.');
+    }
+}
+
+loadEventsFromDatabase();
+renderClubs();
+
+</script>
+</body>
+</html>
